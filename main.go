@@ -20,7 +20,8 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT)
 	<-quit
-	log.Println("stopping")
+	log.Println("Stopping")
 
 	server.Shutdown()
+	db.Shutdown()
 }

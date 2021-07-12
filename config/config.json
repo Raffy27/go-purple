@@ -2,5 +2,12 @@
     "server": {
         "address": ":3000",
         "maxShutdownSec": 5
+    },
+    "database": {
+        "url": "mongodb://localhost:27017",
+        "main": "test"
+    },
+    "algo": {
+
     }
 }

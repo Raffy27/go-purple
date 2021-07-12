@@ -1,6 +1,10 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"log"
+
+	"github.com/spf13/viper"
+)
 
 var config *viper.Viper
 
@@ -11,7 +15,7 @@ func Init() *viper.Viper {
 	config.AddConfigPath("config/")
 
 	if err := config.ReadInConfig(); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	return config

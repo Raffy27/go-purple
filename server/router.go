@@ -13,5 +13,9 @@ func NewRouter() *gin.Engine {
 	test := new(controllers.TestController)
 	r.GET("/ping", test.Ping)
 
+	auth := new(controllers.Auth)
+	r.POST("/login", auth.Login)
+	r.POST("/create", auth.Create)
+
 	return r
 }

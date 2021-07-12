@@ -21,7 +21,7 @@ func Init() *gin.Engine {
 	}
 	go srv.ListenAndServe()
 
-	log.Println("server initialized")
+	log.Println("Server initialized")
 
 	return r
 }
@@ -32,6 +32,8 @@ func Shutdown() {
 	defer cancel()
 
 	if err := srv.Shutdown(ctx); err != nil {
-		log.Println("shutdown error:", err)
+		log.Println("Shutdown error:", err)
+		return
 	}
+	log.Println("Server stopped")
 }
