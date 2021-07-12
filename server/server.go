@@ -13,13 +13,7 @@ import (
 var srv *http.Server
 
 func Init() *gin.Engine {
-	r := gin.New()
-	r.Use(gin.Logger())
-	r.Use(gin.Recovery())
-
-	r.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "Hewwo")
-	})
+	r := NewRouter()
 
 	srv = &http.Server{
 		Addr:    config.Get().GetString("server.address"),
@@ -33,7 +27,8 @@ func Init() *gin.Engine {
 }
 
 func Shutdown() {
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	sec := time.Duration(config.Get().GetInt("server.maxShutdownSec")) * time.Second
+	ctx, cancel := context.WithTimeout(context.Background(), sec)
 	defer cancel()
 
 	if err := srv.Shutdown(ctx); err != nil {
