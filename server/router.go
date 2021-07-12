@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/Raffy27/go-purple/controllers"
+	"github.com/Raffy27/go-purple/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,6 +17,12 @@ func NewRouter() *gin.Engine {
 	auth := new(controllers.Auth)
 	r.POST("/login", auth.Login)
 	r.POST("/create", auth.Create)
+
+	safe := r.Group("api")
+	{
+		safe.Use(middleware.Authentication)
+		safe.GET("/profile", test.Profile)
+	}
 
 	return r
 }

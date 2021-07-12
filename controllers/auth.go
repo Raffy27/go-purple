@@ -30,6 +30,7 @@ func (auth *Auth) Login(c *gin.Context) {
 		})
 		return
 	}
+	res.Decode(&user)
 
 	token, _ := user.GetJwtToken()
 	c.JSON(http.StatusOK, gin.H{
