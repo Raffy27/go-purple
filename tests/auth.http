@@ -1,0 +1,18 @@
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "user": "raffy",
+    "pass": "1234"
+}
+
+###
+
+POST http://localhost:3000/create
+Content-Type: application/json
+
+{
+    "user": "raffy",
+    "pass": "1234",
+    "email": "raffy27@pm.me"
+}
