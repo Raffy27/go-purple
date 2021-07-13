@@ -7,7 +7,6 @@ import (
 	"github.com/Raffy27/go-purple/forms"
 	"github.com/Raffy27/go-purple/models"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Auth struct{}
@@ -25,16 +24,15 @@ func (auth *Auth) Login(c *gin.Context) {
 	// Attempt login
 	svc := &models.UserMethods{Context: c}
 	user, err := svc.Login(info.Username, info.Password)
-	log.Println(err)
 	switch err {
 	case nil:
 		break
-	case mongo.ErrNoDocuments:
-		// User not found
+	case models.ErrUserNotFound:
+		fallthrough
+	case models.ErrWrongPassword:
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Username or password is incorrect."})
 		return
 	default:
-		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -65,11 +63,17 @@ func (auth *Auth) Create(c *gin.Context) {
 	// Attempt to create user
 	svc := &models.UserMethods{Context: c}
 	id, err := svc.Create(info.Username, info.Password, info.Email)
-	if err != nil {
+	switch err {
+	case nil:
+		break
+	case models.ErrUserExists:
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Username already exists."})
+		return
+	default:
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	log.Printf("Created user %s with name '%s'", id, info.Username)
+	log.Printf("Created user %v with name '%s'", id, info.Username)
 
 	// Success
 	c.JSON(http.StatusOK, gin.H{

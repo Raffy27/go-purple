@@ -2,12 +2,20 @@ package models
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/Raffy27/go-purple/models/db"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
+)
+
+var (
+	ErrUserExists    = errors.New("user already exists")
+	ErrUserNotFound  = errors.New("user not found")
+	ErrWrongPassword = errors.New("incorrect password")
 )
 
 type UserMethods struct {
@@ -39,11 +47,14 @@ func (c *UserMethods) FindByID(id string) (*User, error) {
 func (c *UserMethods) Login(username, password string) (*User, error) {
 	user, err := c.FindByUsername(username)
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, ErrUserNotFound
+		}
 		return nil, err
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		return nil, err
+		return nil, ErrWrongPassword
 	}
 
 	return user, nil
@@ -51,6 +62,16 @@ func (c *UserMethods) Login(username, password string) (*User, error) {
 
 // Create creates a new user and returns the ObjectID of the associated document
 func (c *UserMethods) Create(username, password, email string) (primitive.ObjectID, error) {
+	// Check if a user with this username already exists
+	if _, err := c.FindByUsername(username); err != nil {
+		if err != mongo.ErrNoDocuments {
+			// Something went wrong
+			return primitive.NilObjectID, err
+		}
+	} else {
+		return primitive.NilObjectID, ErrUserExists
+	}
+
 	user := &User{
 		Username:  username,
 		Email:     email,
