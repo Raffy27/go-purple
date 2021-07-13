@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/Raffy27/go-purple/config"
 	"github.com/Raffy27/go-purple/models"
 	"github.com/Raffy27/go-purple/models/db"
 	"github.com/dgrijalva/jwt-go"
@@ -28,7 +29,7 @@ func Authentication(c *gin.Context) {
 	}
 	tokenString := strings.TrimSpace(tmp[1])
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		secretKey := "haha"
+		secretKey := config.Get().GetString("secrets.jwt")
 		return []byte(secretKey), nil
 	})
 	if err != nil {

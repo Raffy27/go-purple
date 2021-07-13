@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 
+	"github.com/Raffy27/go-purple/config"
 	"github.com/dgrijalva/jwt-go"
 )
 
@@ -21,7 +22,7 @@ func (user *User) GetJwtToken() (string, error) {
 		"email":     user.Email,
 		"createdAt": user.CreatedAt,
 	})
-	secretKey := "haha"
+	secretKey := config.Get().GetString("secrets.jwt")
 	tokenString, err := token.SignedString([]byte(secretKey))
 	return tokenString, err
 }

@@ -9,5 +9,8 @@
     },
     "algo": {
 
+    },
+    "secrets": {
+        "jwt": "Hottentotta"
     }
 }
