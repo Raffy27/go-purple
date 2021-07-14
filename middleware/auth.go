@@ -7,7 +7,7 @@ import (
 
 	"github.com/Raffy27/go-purple/config"
 	"github.com/Raffy27/go-purple/models"
-	"github.com/Raffy27/go-purple/models/db"
+	"github.com/Raffy27/go-purple/server/db"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo/options"

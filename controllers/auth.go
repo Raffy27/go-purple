@@ -22,18 +22,17 @@ func (auth *Auth) Login(c *gin.Context) {
 	}
 
 	// Attempt login
-	svc := &models.UserMethods{Context: c}
-	user, err := svc.Login(info.Username, info.Password)
+	user, err := models.Login(info.Username, info.Password)
 	switch err {
 	case nil:
 		break
 	case models.ErrUserNotFound:
 		fallthrough
 	case models.ErrWrongPassword:
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Username or password is incorrect."})
+		c.AbortWithStatusJSON(401, gin.H{"error": "Username or password is incorrect."})
 		return
 	default:
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(500, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -41,7 +40,7 @@ func (auth *Auth) Login(c *gin.Context) {
 	token, err := user.GetJwtToken()
 	if err != nil {
 		log.Println(err)
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Error deriving token."})
+		c.AbortWithStatusJSON(500, gin.H{"error": "Error deriving token."})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -61,16 +60,15 @@ func (auth *Auth) Create(c *gin.Context) {
 	}
 
 	// Attempt to create user
-	svc := &models.UserMethods{Context: c}
-	id, err := svc.Create(info.Username, info.Password, info.Email)
+	id, err := models.CreateUser(info.Username, info.Password, info.Email)
 	switch err {
 	case nil:
 		break
 	case models.ErrUserExists:
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Username already exists."})
+		c.AbortWithStatusJSON(400, gin.H{"error": "Username already exists."})
 		return
 	default:
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(500, gin.H{"error": err.Error()})
 		return
 	}
 	log.Printf("Created user %v with name '%s'", id, info.Username)
