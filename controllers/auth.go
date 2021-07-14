@@ -29,7 +29,7 @@ func (auth *Auth) Login(c *gin.Context) {
 	case models.ErrUserNotFound:
 		fallthrough
 	case models.ErrWrongPassword:
-		c.AbortWithStatusJSON(401, gin.H{"error": "Username or password is incorrect."})
+		c.AbortWithStatusJSON(401, gin.H{"error": "Username or password is incorrect"})
 		return
 	default:
 		c.AbortWithStatusJSON(500, gin.H{"error": err.Error()})
@@ -40,7 +40,7 @@ func (auth *Auth) Login(c *gin.Context) {
 	token, err := user.GetJwtToken()
 	if err != nil {
 		log.Println(err)
-		c.AbortWithStatusJSON(500, gin.H{"error": "Error deriving token."})
+		c.AbortWithStatusJSON(500, gin.H{"error": "Error deriving token"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -65,17 +65,17 @@ func (auth *Auth) Create(c *gin.Context) {
 	case nil:
 		break
 	case models.ErrUserExists:
-		c.AbortWithStatusJSON(400, gin.H{"error": "Username already exists."})
+		c.AbortWithStatusJSON(400, gin.H{"error": "Username already exists"})
 		return
 	default:
 		c.AbortWithStatusJSON(500, gin.H{"error": err.Error()})
 		return
 	}
-	log.Printf("Created user %v with name '%s'", id, info.Username)
+	log.Printf("Created user [%s] with name '%s'", id.Hex(), info.Username)
 
 	// Success
 	c.JSON(http.StatusOK, gin.H{
-		"msg": "success!",
+		"msg": "success",
 	})
 
 }

@@ -7,10 +7,8 @@
         "url": "mongodb://localhost:27017",
         "main": "test"
     },
-    "algo": {
-
-    },
-    "secrets": {
-        "jwt": "Hottentotta"
+    "jwt": {
+        "secret": "test",
+        "expires": 72
     }
 }

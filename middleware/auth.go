@@ -1,64 +1,57 @@
 package middleware
 
 import (
-	"log"
-	"net/http"
 	"strings"
+	"time"
 
 	"github.com/Raffy27/go-purple/config"
 	"github.com/Raffy27/go-purple/models"
-	"github.com/Raffy27/go-purple/server/db"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func Authentication(c *gin.Context) {
 	authHeader := c.Request.Header.Get("Authentication")
 	if authHeader == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "Authentication header is missing",
-		})
+		c.AbortWithStatusJSON(400, gin.H{"error": "Authentication header is missing"})
 		return
 	}
 
 	tmp := strings.Split(authHeader, "Bearer")
 	if len(tmp) < 2 {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid token"})
+		c.AbortWithStatusJSON(400, gin.H{"error": "Invalid token"})
 		return
 	}
 	tokenString := strings.TrimSpace(tmp[1])
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		secretKey := config.Get().GetString("secrets.jwt")
+		secretKey := config.Get().GetString("jwt.secret")
 		return []byte(secretKey), nil
 	})
 	if err != nil {
-		c.AbortWithStatusJSON(401, gin.H{
-			"error": err.Error(),
-		})
+		c.AbortWithStatusJSON(401, gin.H{"error": err.Error()})
 		return
 	}
 
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		var user models.User
-		username := claims["username"].(string)
-		res := db.Main().Collection("users").FindOne(c, gin.H{
-			"username": username,
-		}, options.MergeFindOneOptions())
-		if res.Err() != nil {
-			log.Println(res.Err())
-			c.AbortWithStatusJSON(402, gin.H{
-				"error": "User not found",
-			})
-			return
-		}
-		res.Decode(&user)
-
-		c.Set("user", user)
-		c.Next()
-	} else {
-		c.AbortWithStatusJSON(400, gin.H{
-			"error": "Token is not valid",
-		})
+	var claims jwt.MapClaims
+	var ok bool
+	if claims, ok = token.Claims.(jwt.MapClaims); !(ok && token.Valid) {
+		c.AbortWithStatusJSON(401, gin.H{"error": "Invalid token"})
+		return
 	}
+	// Check for an expired token
+	exp := time.Unix(int64(claims["expires"].(float64)), 0)
+	if time.Now().After(exp) {
+		c.AbortWithStatusJSON(401, gin.H{"error": "Token has expired"})
+		return
+	}
+
+	id := claims["id"].(string)
+	user, err := models.FindUserByID(id)
+	if err != nil {
+		c.AbortWithStatusJSON(402, gin.H{"error": "User not found"})
+		return
+	}
+
+	c.Set("user", user)
+	c.Next()
 }

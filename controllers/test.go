@@ -19,17 +19,12 @@ func (t *TestController) Ping(c *gin.Context) {
 }
 
 func (t *TestController) Profile(c *gin.Context) {
-	if tmp, ok := c.Get("user"); ok {
-		user := tmp.(models.User)
-		c.JSON(http.StatusOK, gin.H{
-			"msg":       "This is your profile!",
-			"user":      user.Username,
-			"email":     user.Email,
-			"createdAt": user.CreatedAt,
-		})
-	} else {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"error": "Invalid context encountered?",
-		})
-	}
+	tmp, _ := c.Get("user")
+	user := tmp.(*models.User)
+	c.JSON(http.StatusOK, gin.H{
+		"id":        user.ID,
+		"user":      user.Username,
+		"email":     user.Email,
+		"createdAt": user.CreatedAt,
+	})
 }

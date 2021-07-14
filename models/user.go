@@ -32,12 +32,14 @@ type User struct {
 // GetJwtToken returns a JWT token for the given user.
 // The returned token contains a username, email, account creation date, ...
 func (user *User) GetJwtToken() (string, error) {
+	exp := time.Hour * time.Duration(config.Get().GetInt64("jwt.expires"))
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"username":  user.Username,
-		"email":     user.Email,
-		"createdAt": user.CreatedAt,
+		"id":       user.ID.Hex(),
+		"username": user.Username,
+
+		"expires": time.Now().Add(exp).Unix(),
 	})
-	secretKey := config.Get().GetString("secrets.jwt")
+	secretKey := config.Get().GetString("jwt.secret")
 	tokenString, err := token.SignedString([]byte(secretKey))
 	return tokenString, err
 }
@@ -53,7 +55,8 @@ func FindUser(username string) (*User, error) {
 	return &user, err
 }
 
-func FindUserByID(id string) (*User, error) {
+func FindUserByID(hexid string) (*User, error) {
+	id, _ := primitive.ObjectIDFromHex(hexid)
 	res := db.C("users").FindOne(context.TODO(), bson.M{"_id": id})
 	if err := res.Err(); err != nil {
 		return nil, err
