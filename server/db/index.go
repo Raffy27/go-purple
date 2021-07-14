@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"log"
+	"strings"
 
 	"github.com/Raffy27/go-purple/config"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -33,6 +34,15 @@ func Client() *mongo.Client {
 
 func Main() *mongo.Database {
 	return client.Database(config.Get().GetString("database.main"))
+}
+
+func C(path string) *mongo.Collection {
+	i := strings.Index(path, "/")
+	if i == -1 {
+		// No database specified, use the main database
+		return Main().Collection(path)
+	}
+	return client.Database(path[:i]).Collection(path[i+1:])
 }
 
 func Shutdown() {

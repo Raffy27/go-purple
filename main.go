@@ -7,8 +7,8 @@ import (
 	"syscall"
 
 	"github.com/Raffy27/go-purple/config"
-	"github.com/Raffy27/go-purple/models/db"
 	"github.com/Raffy27/go-purple/server"
+	"github.com/Raffy27/go-purple/server/db"
 )
 
 func main() {
