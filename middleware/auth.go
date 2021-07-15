@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/Raffy27/go-purple/config"
-	"github.com/Raffy27/go-purple/models"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
@@ -45,13 +44,6 @@ func Authentication(c *gin.Context) {
 		return
 	}
 
-	id := claims["id"].(string)
-	user, err := models.FindUserByID(id)
-	if err != nil {
-		c.AbortWithStatusJSON(402, gin.H{"error": "User not found"})
-		return
-	}
-
-	c.Set("user", user)
+	c.Set("claims", claims)
 	c.Next()
 }
