@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/spf13/viper"
 )
 
@@ -23,4 +24,20 @@ func Init() *viper.Viper {
 
 func Get() *viper.Viper {
 	return config
+}
+
+func GetJWTAlgorithm() jwt.SigningMethod {
+	algo := config.GetString("jwt.algo")
+	switch algo {
+	case "HS256":
+		return jwt.SigningMethodHS256
+	case "HS384":
+		return jwt.SigningMethodHS384
+	case "HS512":
+		return jwt.SigningMethodHS512
+	case "RS256":
+		return jwt.SigningMethodRS256
+	default:
+		return jwt.SigningMethodHS256
+	}
 }

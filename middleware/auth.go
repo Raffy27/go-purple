@@ -23,6 +23,11 @@ func Authentication(c *gin.Context) {
 	}
 	tokenString := strings.TrimSpace(tmp[1])
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		algo := config.GetJWTAlgorithm()
+		if algo != token.Method {
+			return nil, jwt.ErrSignatureInvalid
+		}
+
 		secretKey := config.Get().GetString("jwt.secret")
 		return []byte(secretKey), nil
 	})
