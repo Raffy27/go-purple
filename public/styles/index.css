@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400&display=swap');
+
+body {
+	font-family: 'Titillium Web', sans-serif;
+	background-color: #e1e3e6;
+}
+
+.centered {
+	text-align: center;
+}
+
+.m-top {
+	margin-top: 35vh;
+}
+
+p {
+	font-weight: 300;
+	margin-top: 0;
+}
+
+h1 {
+	margin-bottom: 0;
+}
+
+.fade {
+	animation: fadeIn 3s 1s both;
+}
+
+@keyframes fadeIn {
+	0% {opacity: 0;}
+	100% {opacity: 1;}
+}
