@@ -10,18 +10,13 @@ import (
 )
 
 func Authentication(c *gin.Context) {
-	authHeader := c.Request.Header.Get("Authentication")
-	if authHeader == "" {
-		c.AbortWithStatusJSON(400, gin.H{"error": "Authentication header is missing"})
+	authHeader := c.Request.Header.Get("Authorization")
+	if !strings.HasPrefix(authHeader, "Bearer ") {
+		c.AbortWithStatusJSON(401, gin.H{"error": "Invalid token"})
 		return
 	}
 
-	tmp := strings.Split(authHeader, "Bearer")
-	if len(tmp) < 2 {
-		c.AbortWithStatusJSON(400, gin.H{"error": "Invalid token"})
-		return
-	}
-	tokenString := strings.TrimSpace(tmp[1])
+	tokenString := strings.TrimSpace(strings.TrimPrefix(authHeader, "Bearer"))
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		algo := config.GetJWTAlgorithm()
 		if algo != token.Method {
