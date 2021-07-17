@@ -9,9 +9,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Auth struct{}
+type AuthController struct{}
 
-func (auth *Auth) Login(c *gin.Context) {
+func (*AuthController) Login(c *gin.Context) {
 	// Validate form input
 	var info forms.LoginForm
 	if err := c.ShouldBindJSON(&info); err != nil {
@@ -49,9 +49,13 @@ func (auth *Auth) Login(c *gin.Context) {
 	})
 }
 
-func (auth *Auth) Create(c *gin.Context) {
+func (*AuthController) Logout(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"msg": "success"})
+}
+
+func (*AuthController) Register(c *gin.Context) {
 	// Validate form input
-	var info forms.CreateForm
+	var info forms.RegisterForm
 	if err := c.ShouldBindJSON(&info); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": "Please input all fields",

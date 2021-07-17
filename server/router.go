@@ -18,14 +18,24 @@ func NewRouter() *gin.Engine {
 	test := new(controllers.TestController)
 	r.GET("/ping", test.Ping)
 
-	auth := new(controllers.Auth)
-	r.POST("/login", auth.Login)
-	r.POST("/create", auth.Create)
-
-	safe := r.Group("api")
+	v1 := r.Group("api/v1")
 	{
-		safe.Use(middleware.Authentication)
-		safe.GET("/profile", test.Profile)
+		auth := v1.Group("auth")
+		{
+			c := new(controllers.AuthController)
+			auth.POST("login", c.Login)
+			auth.POST("logout", c.Logout)
+			auth.POST("register", c.Register)
+		}
+
+		users := v1.Group("users")
+		{
+			users.Use(middleware.Authentication)
+
+			c := new(controllers.UserController)
+			users.GET("", c.GetAll)
+			users.GET("/:user", c.GetByUsername)
+		}
 	}
 
 	return r

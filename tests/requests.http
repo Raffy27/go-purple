@@ -1,0 +1,32 @@
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "username": "raffy",
+    "password": "1234"
+}
+
+###
+
+POST http://localhost:3000/api/v1/auth/register
+Content-Type: application/json
+
+{
+    "username": "raffy",
+    "password": "1234",
+    "email": "raffy27@pm.me"
+}
+
+###
+
+POST http://localhost:3000/api/v1/auth/logout
+
+###
+
+GET http://localhost:3000/api/v1/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVzIjoxNjI2NzcwNDkxLCJpZCI6IjYwZWViODdkZGVkNWI3ZjhjM2YwMzY2MyIsInVzZXJuYW1lIjoicmFmZnkifQ.TAYW0b9KIwA8toMTKSxjRKpuBmXWbbNkj5Xktx9AbIA
+
+###
+
+GET http://localhost:3000/api/v1/users/raffy
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVzIjoxNjI2NzcwNDkxLCJpZCI6IjYwZWViODdkZGVkNWI3ZjhjM2YwMzY2MyIsInVzZXJuYW1lIjoicmFmZnkifQ.TAYW0b9KIwA8toMTKSxjRKpuBmXWbbNkj5Xktx9AbIA

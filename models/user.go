@@ -23,7 +23,7 @@ var (
 type User struct {
 	ID       primitive.ObjectID `bson:"_id,omitempty"`
 	Username string
-	Password string
+	Password string `json:"password,omitempty"`
 
 	Email     string
 	CreatedAt time.Time

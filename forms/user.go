@@ -5,7 +5,7 @@ type LoginForm struct {
 	Password string `form:"password" binding:"required"`
 }
 
-type CreateForm struct {
+type RegisterForm struct {
 	Username string `form:"username" binding:"required"`
 	Password string `form:"password" binding:"required"`
 
