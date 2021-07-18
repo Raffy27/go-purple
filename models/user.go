@@ -7,7 +7,7 @@ import (
 
 	"github.com/Raffy27/go-purple/config"
 	"github.com/Raffy27/go-purple/server/db"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -35,10 +35,11 @@ func (user *User) GetJwtToken() (string, error) {
 	exp := time.Hour * time.Duration(config.Get().GetInt64("jwt.expires"))
 	algo := config.GetJWTAlgorithm()
 	token := jwt.NewWithClaims(algo, jwt.MapClaims{
-		"id":       user.ID.Hex(),
-		"username": user.Username,
+		"id":    user.ID.Hex(),
+		"user":  user.Username,
+		"email": user.Email,
 
-		"expires": time.Now().Add(exp).Unix(),
+		"exp": time.Now().Add(exp).Unix(),
 	})
 	secretKey := config.Get().GetString("jwt.secret")
 	tokenString, err := token.SignedString([]byte(secretKey))

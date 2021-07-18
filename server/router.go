@@ -15,9 +15,6 @@ func NewRouter() *gin.Engine {
 	// Static files
 	r.Use(static.Serve("/", static.LocalFile("public", false)))
 
-	test := new(controllers.TestController)
-	r.GET("/ping", test.Ping)
-
 	v1 := r.Group("api/v1")
 	{
 		auth := v1.Group("auth")
@@ -30,7 +27,7 @@ func NewRouter() *gin.Engine {
 
 		users := v1.Group("users")
 		{
-			users.Use(middleware.Authentication)
+			users.Use(middleware.Authentication())
 
 			c := new(controllers.UserController)
 			users.GET("", c.GetAll)
