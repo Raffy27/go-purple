@@ -27,7 +27,7 @@ func Init() *gin.Engine {
 }
 
 func Shutdown() {
-	sec := time.Duration(config.Get().GetInt("server.maxShutdownSec")) * time.Second
+	sec := time.Duration(config.Get().GetInt("server.maxShutdown")) * time.Second
 	ctx, cancel := context.WithTimeout(context.Background(), sec)
 	defer cancel()
 

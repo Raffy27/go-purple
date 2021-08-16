@@ -32,7 +32,7 @@ type User struct {
 // GetJwtToken returns a JWT token for the given user.
 // The returned token contains a username, email, account creation date, ...
 func (user *User) GetJwtToken() (string, error) {
-	exp := time.Hour * time.Duration(config.Get().GetInt64("jwt.expires"))
+	exp := time.Second * time.Duration(config.Get().GetInt64("jwt.expires"))
 	algo := config.GetJWTAlgorithm()
 	token := jwt.NewWithClaims(algo, jwt.MapClaims{
 		"id":    user.ID.Hex(),

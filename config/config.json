@@ -1,7 +1,7 @@
 {
     "server": {
         "address": ":3000",
-        "maxShutdownSec": 5
+        "maxShutdown": 5
     },
     "database": {
         "url": "mongodb://localhost:27017",
@@ -10,6 +10,6 @@
     "jwt": {
         "algo": "HS256",
         "secret": "test",
-        "expires": 72
+        "expires": 259200
     }
 }
